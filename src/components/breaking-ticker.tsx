@@ -1,0 +1,30 @@
+import { Clock4, Megaphone } from 'lucide-react'
+
+import { breakingItems } from '@/data/news'
+
+export function BreakingTicker() {
+  return (
+    <div className="border-b border-neutral-200 bg-white">
+      <div className="mx-auto flex max-w-7xl items-stretch gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="inline-flex items-center gap-2 rounded-[2px] bg-[#ecf6eb] px-4 py-3 text-[12px] font-semibold text-neutral-950">
+          <Megaphone className="h-3.5 w-3.5 text-[#0a8f07]" />
+          Breaking News
+        </div>
+        <div className="min-w-0 flex-1 overflow-hidden rounded-[2px] border border-neutral-200 bg-white px-4 py-3">
+          <div className="ticker flex min-w-max items-center gap-10 text-[13px] text-neutral-700">
+            {breakingItems.map((item) => (
+              <span key={item} className="flex items-center gap-3 whitespace-nowrap">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#0a8f07]" />
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="hidden items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-neutral-400 md:inline-flex">
+          <Clock4 className="h-3.5 w-3.5" />
+          Live
+        </div>
+      </div>
+    </div>
+  )
+}

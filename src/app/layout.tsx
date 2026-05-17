@@ -1,0 +1,48 @@
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
+
+import { SiteFooter } from '@/components/site-footer'
+import { SiteHeader } from '@/components/site-header'
+import { siteName } from '@/data/news'
+import { absoluteUrl } from '@/lib/metadata'
+import './globals.css'
+
+export const metadata: Metadata = {
+  metadataBase: new URL(absoluteUrl('/')),
+  title: {
+    default: `${siteName} - Nigerian News, Politics, Business and Sports`,
+    template: `%s | ${siteName}`,
+  },
+  description:
+    'A modern Nigerian news platform covering politics, business, sports, technology, health, entertainment and education.',
+  openGraph: {
+    title: `${siteName} - Nigerian News`,
+    description:
+      'Daily Nigerian and African news coverage with a clean editorial reading experience.',
+    url: absoluteUrl('/'),
+    siteName,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteName} - Nigerian News`,
+    description:
+      'Daily Nigerian and African news coverage with a clean editorial reading experience.',
+  },
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: ReactNode
+}>) {
+  return (
+    <html lang="en-NG">
+      <body className="min-h-screen bg-white text-neutral-950 antialiased">
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
+    </html>
+  )
+}
