@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
-import { ChevronRight, Play } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { Building2, CarFront, ChevronRight, Play, Briefcase } from 'lucide-react'
 
 import { NewsCard } from '@/components/news-card'
 import { NewsImage } from '@/components/news-image'
@@ -21,6 +22,42 @@ type PortalCategoryBlockData = {
   featured: NewsArticle
   list: NewsArticle[]
 }
+
+type SponsoredBannerData = {
+  label: string
+  title: string
+  description: string
+  href: string
+  icon: LucideIcon
+  accent: string
+}
+
+const sponsoredBanners: SponsoredBannerData[] = [
+  {
+    label: 'Real estate',
+    title: "We're Best Real Estate Agency",
+    description: 'Buy, sell and promote property listings with premium visibility.',
+    href: '/advertise',
+    icon: Building2,
+    accent: 'from-[#0a8f07] to-[#067203]',
+  },
+  {
+    label: 'Job platform',
+    title: 'Recruitment banners that convert',
+    description: 'Reach readers looking for work, hiring updates and career moves.',
+    href: '/advertise',
+    icon: Briefcase,
+    accent: 'from-[#0f172a] to-[#334155]',
+  },
+  {
+    label: 'Car rental platform',
+    title: 'Travel and mobility bookings',
+    description: 'Promote car rentals, airport pickups and short-term vehicle offers.',
+    href: '/advertise',
+    icon: CarFront,
+    accent: 'from-[#1f2937] to-[#111827]',
+  },
+]
 
 function SectionTitle({
   title,
@@ -103,6 +140,35 @@ function PortalCategoryBlock({ block }: { block: PortalCategoryBlockData }) {
   )
 }
 
+function SponsoredBannerCard({ banner, compact = false }: { banner: SponsoredBannerData; compact?: boolean }) {
+  return (
+    <Link
+      href={banner.href}
+      className={`group block select-none overflow-hidden border border-neutral-200 bg-white transition-transform duration-300 hover:-translate-y-0.5 hover:border-neutral-300 ${
+        compact ? 'p-4' : ''
+      }`}
+      aria-label={`${banner.label} advertising banner`}
+    >
+      <div className={`rounded-[2px] bg-gradient-to-br ${banner.accent} p-4 text-white ${compact ? '' : 'sm:p-5'}`}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-white/80">{banner.label}</p>
+            <h3 className={`mt-2 font-semibold leading-[1.05] tracking-[-0.04em] ${compact ? 'text-[1.05rem]' : 'text-[1.4rem] sm:text-[1.75rem]'}`}>
+              {banner.title}
+            </h3>
+            <p className={`mt-3 text-white/80 ${compact ? 'text-[0.88rem] leading-6' : 'text-[0.92rem] leading-7'}`}>
+              {banner.description}
+            </p>
+          </div>
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10">
+            <banner.icon className="h-5 w-5" />
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
 export default function HomePage() {
   const home = getHomePageContent()
   const lead = getArticleBySlug(home.hero.leadSlug)
@@ -128,7 +194,7 @@ export default function HomePage() {
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             {lead ? (
               <Link href={`/article/${lead.slug}`} className="group block select-none h-full">
-                <div className="relative h-full min-h-[420px] overflow-hidden bg-neutral-100 lg:min-h-[430px]">
+                <div className="relative h-full min-h-[320px] overflow-hidden bg-neutral-100 lg:min-h-[340px]">
                   <NewsImage
                     src={lead.image}
                     alt={lead.imageAlt}
@@ -151,7 +217,7 @@ export default function HomePage() {
             <div className="grid grid-cols-2 grid-rows-2 gap-4">
               {leadRight.map((article) => (
                 <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none h-full">
-                  <div className="relative h-full min-h-[200px] overflow-hidden bg-neutral-100">
+                  <div className="relative h-full min-h-[145px] overflow-hidden bg-neutral-100">
                     <NewsImage
                       src={article.image}
                       alt={article.imageAlt}
@@ -183,32 +249,11 @@ export default function HomePage() {
 
             <div className="grid gap-4">
               <StoryStack items={trending.slice(0, 3)} />
-              <Link
-                href="/advertise"
-                className="group block select-none border border-neutral-200 bg-neutral-50 p-4 text-center transition-colors hover:border-neutral-300 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a8f07] focus-visible:ring-offset-2"
-                aria-label="Advertise with us"
-              >
-                <p className="text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-neutral-500">Sponsored</p>
-                <div className="mt-3 flex items-center justify-between gap-4">
-                  <div className="min-w-0 text-left">
-                    <h3 className="text-[1.9rem] font-semibold leading-[1.05] tracking-[-0.04em] text-neutral-800">
-                      We&apos;re Best Real Estate Agency
-                    </h3>
-                    <p className="mt-3 max-w-sm text-[0.92rem] leading-7 text-neutral-500">
-                      We are a largest real estate agency for buying and selling your property with 100% confidently.
-                    </p>
-                  </div>
-                  <div className="hidden h-36 w-44 overflow-hidden rounded-[2px] bg-white lg:block">
-                    <NewsImage
-                      src={lead?.image ?? articles[0].image}
-                      alt="Advertising banner"
-                      width={360}
-                      height={240}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                </div>
-              </Link>
+              <div className="grid gap-3">
+                {sponsoredBanners.map((banner) => (
+                  <SponsoredBannerCard key={banner.label} banner={banner} compact />
+                ))}
+              </div>
             </div>
           </aside>
         </div>
@@ -224,32 +269,11 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        <Link
-          href="/advertise"
-          className="group block overflow-hidden border border-neutral-200 bg-white transition-colors hover:border-neutral-300 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a8f07] focus-visible:ring-offset-2"
-          aria-label="Advertise with us"
-        >
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="flex flex-col justify-center px-5 py-8 sm:px-8 sm:py-10">
-              <p className="text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-neutral-500">Sponsored</p>
-              <h3 className="mt-3 max-w-md text-[1.9rem] font-semibold leading-[1.05] tracking-[-0.05em] text-neutral-900 sm:text-[2.5rem]">
-                We&apos;re Best Real Estate Agency
-              </h3>
-              <p className="mt-4 max-w-lg text-[0.95rem] leading-7 text-neutral-500">
-                We are a largest real estate agency for buying and selling your property with 100% confidently.
-              </p>
-            </div>
-            <div className="relative min-h-[220px] bg-neutral-100">
-              <NewsImage
-                src={lead?.image ?? articles[0].image}
-                alt="Sponsored banner"
-                fill
-                sizes="(max-width: 768px) 100vw, 40vw"
-                className="object-cover object-center"
-              />
-            </div>
-          </div>
-        </Link>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {sponsoredBanners.map((banner) => (
+            <SponsoredBannerCard key={banner.label} banner={banner} />
+          ))}
+        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">

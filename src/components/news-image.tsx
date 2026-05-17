@@ -23,6 +23,7 @@ export function NewsImage({ src, alt, className, fill, width, height, ...props }
 
   return (
     <Image
+      {...props}
       src={currentSrc}
       alt={alt}
       fill={fill}
@@ -30,8 +31,12 @@ export function NewsImage({ src, alt, className, fill, width, height, ...props }
       height={height}
       className={className}
       unoptimized={remote}
-      onError={() => setCurrentSrc(DEFAULT_IMAGE_SRC)}
-      {...props}
+      referrerPolicy={remote ? 'no-referrer' : props.referrerPolicy}
+      onError={() => {
+        if (currentSrc !== DEFAULT_IMAGE_SRC) {
+          setCurrentSrc(DEFAULT_IMAGE_SRC)
+        }
+      }}
     />
   )
 }
