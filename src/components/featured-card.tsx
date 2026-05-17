@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { ArrowRight, Clock3 } from 'lucide-react'
@@ -6,6 +5,7 @@ import { ArrowRight, Clock3 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { NewsImage } from '@/components/news-image'
 import type { NewsArticle } from '@/types/news'
 
 type FeaturedCardProps = {
@@ -18,7 +18,7 @@ export function FeaturedCard({ article, large }: FeaturedCardProps) {
     <Card className="overflow-hidden border-neutral-200">
       <Link href={`/article/${article.slug}`} className="block select-none">
         <div className={`relative ${large ? 'aspect-[16/10]' : 'aspect-[16/9]'}`}>
-          <Image
+          <NewsImage
             src={article.image}
             alt={article.imageAlt}
             fill

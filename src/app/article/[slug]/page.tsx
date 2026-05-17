@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -7,6 +6,7 @@ import { MessageSquare } from 'lucide-react'
 
 import { ArticleMeta } from '@/components/article-meta'
 import { ArticleShareActions } from '@/components/article-share-actions'
+import { NewsImage } from '@/components/news-image'
 import { NewsCard } from '@/components/news-card'
 import { AdvertBlock, MostReadList, NewsletterCard, SocialFollowCard } from '@/components/sidebar-widget'
 import { Badge } from '@/components/ui/badge'
@@ -96,7 +96,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
           <div className="mt-7 overflow-hidden rounded-[2px] border border-neutral-200">
             <div className="relative aspect-[16/9]">
-              <Image src={article.image} alt={article.imageAlt} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 720px" />
+              <NewsImage
+                src={article.image}
+                alt={article.imageAlt}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 720px"
+              />
             </div>
           </div>
 

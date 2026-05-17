@@ -1,10 +1,10 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { ChevronRight, Clock3 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { NewsImage } from '@/components/news-image'
 import type { CategoryDefinition, NewsArticle } from '@/types/news'
 
 type CategorySectionProps = {
@@ -31,7 +31,7 @@ export function CategorySection({ category, featured, secondary, miniStories }: 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.9fr)]">
         <Link href={`/article/${featured.slug}`} className="group block">
           <div className="relative aspect-[16/10] overflow-hidden rounded-[2px] bg-neutral-100">
-            <Image
+            <NewsImage
               src={featured.image}
               alt={featured.imageAlt}
               fill
@@ -58,7 +58,7 @@ export function CategorySection({ category, featured, secondary, miniStories }: 
           {secondary.map((item) => (
             <Link key={item.slug} href={`/article/${item.slug}`} className="group block border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
               <div className="relative aspect-[16/10] overflow-hidden rounded-[2px] bg-neutral-100">
-                <Image
+                <NewsImage
                   src={item.image}
                   alt={item.imageAlt}
                   fill

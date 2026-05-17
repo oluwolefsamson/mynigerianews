@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { ChevronRight, Play } from 'lucide-react'
 
 import { NewsCard } from '@/components/news-card'
+import { NewsImage } from '@/components/news-image'
 import { AdvertBlock, NewsletterCard } from '@/components/sidebar-widget'
 import { Button } from '@/components/ui/button'
 import { getHomePageContent } from '@/services/cms'
@@ -71,7 +71,7 @@ function PortalCategoryBlock({ block }: { block: PortalCategoryBlockData }) {
       <div className="space-y-4">
         <Link href={`/article/${block.featured.slug}`} className="group block select-none">
           <div className="relative aspect-[16/10] overflow-hidden rounded-[2px] bg-neutral-100">
-            <Image
+            <NewsImage
               src={block.featured.image}
               alt={block.featured.imageAlt}
               fill
@@ -129,7 +129,7 @@ export default function HomePage() {
             {lead ? (
               <Link href={`/article/${lead.slug}`} className="group block select-none h-full">
                 <div className="relative h-full min-h-[420px] overflow-hidden bg-neutral-100 lg:min-h-[430px]">
-                  <Image
+                  <NewsImage
                     src={lead.image}
                     alt={lead.imageAlt}
                     fill
@@ -152,7 +152,7 @@ export default function HomePage() {
               {leadRight.map((article) => (
                 <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none h-full">
                   <div className="relative h-full min-h-[200px] overflow-hidden bg-neutral-100">
-                    <Image
+                    <NewsImage
                       src={article.image}
                       alt={article.imageAlt}
                       fill
@@ -199,7 +199,7 @@ export default function HomePage() {
                     </p>
                   </div>
                   <div className="hidden h-36 w-44 overflow-hidden rounded-[2px] bg-white lg:block">
-                    <Image
+                    <NewsImage
                       src={lead?.image ?? articles[0].image}
                       alt="Advertising banner"
                       width={360}
@@ -240,7 +240,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="relative min-h-[220px] bg-neutral-100">
-              <Image
+              <NewsImage
                 src={lead?.image ?? articles[0].image}
                 alt="Sponsored banner"
                 fill
@@ -284,7 +284,7 @@ export default function HomePage() {
             {weeklyArticles.map((article) => (
               <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none bg-white p-3">
                 <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
-                  <Image
+                  <NewsImage
                     src={article.image}
                     alt={article.imageAlt}
                     fill
@@ -310,7 +310,7 @@ export default function HomePage() {
             {lead ? (
               <Link href={`/article/${lead.slug}`} className="group block select-none overflow-hidden border border-neutral-200 bg-white">
                 <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-                  <Image
+                  <NewsImage
                     src={lead.image}
                     alt={lead.imageAlt}
                     fill
@@ -334,7 +334,7 @@ export default function HomePage() {
               {editorPicks.slice(1, 5).map((article) => (
                 <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none overflow-hidden border border-neutral-200 bg-white">
                   <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
-                    <Image
+                    <NewsImage
                       src={article.image}
                       alt={article.imageAlt}
                       fill
@@ -360,7 +360,13 @@ export default function HomePage() {
                   <Link key={article.slug} href={`/article/${article.slug}`} className="flex select-none gap-3 border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
                     <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden bg-neutral-100">
                       {index === 0 ? (
-                        <Image src={article.image} alt={article.imageAlt} width={64} height={64} className="h-full w-full object-cover" />
+                        <NewsImage
+                          src={article.image}
+                          alt={article.imageAlt}
+                          width={64}
+                          height={64}
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         <span className="text-xs font-semibold text-neutral-500">IMG</span>
                       )}
@@ -400,7 +406,7 @@ export default function HomePage() {
             {lead ? (
               <Link href={`/article/${lead.slug}`} className="group block select-none overflow-hidden border border-neutral-200 bg-white">
                 <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-                  <Image
+                  <NewsImage
                     src={lead.image}
                     alt={lead.imageAlt}
                     fill
@@ -431,7 +437,7 @@ export default function HomePage() {
                 {featuredPosts.slice(0, 3).map((article) => (
                   <Link key={article.slug} href={`/article/${article.slug}`} className="group flex select-none gap-3 border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
                     <div className="relative h-16 w-24 shrink-0 overflow-hidden bg-neutral-100">
-                      <Image
+                      <NewsImage
                         src={article.image}
                         alt={article.imageAlt}
                         fill

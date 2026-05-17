@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { Clock3 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { NewsImage } from '@/components/news-image'
 import { cn } from '@/lib/utils'
 import type { NewsArticle } from '@/types/news'
 
@@ -18,7 +18,7 @@ export function NewsCard({ article, compact }: NewsCardProps) {
       <Link href={`/article/${article.slug}`} className="group block select-none">
         <div className="overflow-hidden rounded-[2px] bg-neutral-100">
           <div className="relative aspect-[4/3]">
-            <Image
+            <NewsImage
               src={article.image}
               alt={article.imageAlt}
               fill
@@ -46,7 +46,7 @@ export function NewsCard({ article, compact }: NewsCardProps) {
     <Link href={`/article/${article.slug}`} className="group block select-none">
       <div className="overflow-hidden rounded-[2px] bg-neutral-100">
         <div className="relative aspect-[16/10]">
-          <Image
+          <NewsImage
             src={article.image}
             alt={article.imageAlt}
             fill
