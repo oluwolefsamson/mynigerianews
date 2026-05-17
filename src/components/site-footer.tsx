@@ -16,7 +16,13 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
           <div className="flex items-start">
-            <Image src="/logo.png" alt="MyNigeria News" width={160} height={54} className="h-auto w-[160px] object-contain" />
+            <Image
+              src="/logo.png"
+              alt="MyNigeria News"
+              width={160}
+              height={54}
+              className="h-auto w-[160px] object-contain brightness-0 invert"
+            />
           </div>
           <p className="max-w-5xl text-[0.96rem] leading-8 text-white/95">{footer.description}</p>
         </div>
