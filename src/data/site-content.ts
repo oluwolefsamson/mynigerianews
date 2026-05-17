@@ -1,5 +1,13 @@
 import { navCategories } from '@/data/news'
-import type { ContactPageContent, FooterContent, HomePageContent, NavItem, PromoCard, StaticPageContent } from '@/types/cms'
+import type {
+  AdvertisePageContent,
+  ContactPageContent,
+  FooterContent,
+  HomePageContent,
+  NavItem,
+  PromoCard,
+  StaticPageContent,
+} from '@/types/cms'
 
 export const headerContent: {
   navItems: NavItem[]
@@ -153,10 +161,27 @@ export const aboutPageContent: StaticPageContent = {
   ],
 }
 
-export const advertisePageContent: StaticPageContent = {
+export const advertisePageContent: AdvertisePageContent = {
   eyebrow: 'Advertise',
   title: 'Reach a Nigerian news audience every day',
   paragraphs: ['Use premium placements across the homepage, category pages and article detail layouts.'],
+  placements: [
+    {
+      label: 'News platform',
+      title: 'Homepage and article banners',
+      description: 'Promote brands across premium masthead, in-article and sidebar positions on the news site.',
+    },
+    {
+      label: 'Job platform',
+      title: 'Recruitment campaign banners',
+      description: 'Show hiring messages to readers already looking for business, career and opportunity updates.',
+    },
+    {
+      label: 'Car rental platform',
+      title: 'Travel and mobility ads',
+      description: 'Reach visitors planning trips, transport bookings or short-term vehicle rentals.',
+    },
+  ],
 }
 
 export const privacyPageContent: StaticPageContent = {

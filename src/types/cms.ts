@@ -54,6 +54,16 @@ export type StaticPageContent = {
   paragraphs: string[]
 }
 
+export type AdvertisePlacement = {
+  title: string
+  description: string
+  label: string
+}
+
+export type AdvertisePageContent = StaticPageContent & {
+  placements: AdvertisePlacement[]
+}
+
 export type ContactPageContent = StaticPageContent & {
   email: string
   phone: string
