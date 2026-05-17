@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { Search, Send, Menu, User, X, Facebook, Instagram, Twitter, Youtube } from 'lucide-react'
 
-import { BreakingTicker } from '@/components/breaking-ticker'
 import { GlobalSearch } from '@/components/global-search'
 import { Button } from '@/components/ui/button'
 import { getHeaderContent } from '@/services/cms'
@@ -18,11 +17,22 @@ export function SiteHeader() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const updateScrollState = () => {
+      setHasScrolled(window.scrollY > 64)
+    }
+
+    updateScrollState()
+    window.addEventListener('scroll', updateScrollState, { passive: true })
+    return () => window.removeEventListener('scroll', updateScrollState)
   }, [])
 
   useEffect(() => {
@@ -35,98 +45,124 @@ export function SiteHeader() {
   )
 
   return (
-    <header className="sticky top-0 z-50 bg-white">
-      <div className="bg-[#151515] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] font-medium sm:px-6 lg:px-8">
-          <span className="text-neutral-300">
-            {new Intl.DateTimeFormat('en-NG', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-              timeZone: 'Africa/Lagos',
-            }).format(now)}
-          </span>
-          <div className="flex items-center gap-3 text-neutral-300">
-            <span>
+    <>
+      <header className="bg-white">
+        <div className="bg-[#151515] text-white">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] font-medium sm:px-6 lg:px-8">
+            <span className="text-neutral-300">
               {new Intl.DateTimeFormat('en-NG', {
-                hour: 'numeric',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true,
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
                 timeZone: 'Africa/Lagos',
               }).format(now)}
             </span>
-            <span className="h-4 w-px bg-white/25" />
-            <Link href="https://facebook.com" aria-label="Facebook" className="select-none hover:text-white">
-              <Facebook className="h-3.5 w-3.5" />
-            </Link>
-            <Link href="https://x.com" aria-label="X" className="select-none hover:text-white">
-              <Twitter className="h-3.5 w-3.5" />
-            </Link>
-            <Link href="https://instagram.com" aria-label="Instagram" className="select-none hover:text-white">
-              <Instagram className="h-3.5 w-3.5" />
-            </Link>
-            <Link href="https://linkedin.com" aria-label="LinkedIn" className="select-none hover:text-white">
-              <span className="text-[11px] font-semibold">in</span>
-            </Link>
-            <Link href="https://youtube.com" aria-label="YouTube" className="select-none hover:text-white">
-              <Youtube className="h-3.5 w-3.5" />
-            </Link>
+            <div className="flex items-center gap-3 text-neutral-300">
+              <span>
+                {new Intl.DateTimeFormat('en-NG', {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: true,
+                  timeZone: 'Africa/Lagos',
+                }).format(now)}
+              </span>
+              <span className="h-4 w-px bg-white/25" />
+              <Link href="https://facebook.com" aria-label="Facebook" className="select-none hover:text-white">
+                <Facebook className="h-3.5 w-3.5" />
+              </Link>
+              <Link href="https://x.com" aria-label="X" className="select-none hover:text-white">
+                <Twitter className="h-3.5 w-3.5" />
+              </Link>
+              <Link href="https://instagram.com" aria-label="Instagram" className="select-none hover:text-white">
+                <Instagram className="h-3.5 w-3.5" />
+              </Link>
+              <Link href="https://linkedin.com" aria-label="LinkedIn" className="select-none hover:text-white">
+                <span className="text-[11px] font-semibold">in</span>
+              </Link>
+              <Link href="https://youtube.com" aria-label="YouTube" className="select-none hover:text-white">
+                <Youtube className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="bg-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <Link href="/" className="flex select-none items-center">
-              <Image
-                src="/logo.png"
-                alt="MyNigeria News"
-                width={160}
-                height={54}
-                priority
-                className="h-auto w-[160px] object-contain"
-              />
-            </Link>
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-neutral-200 lg:hidden"
-              onClick={() => setOpen((value) => !value)}
-              aria-label="Toggle navigation menu"
-              aria-expanded={open}
-              aria-controls="mobile-navigation"
-            >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-
-          <div className="hidden gap-3 lg:grid lg:grid-cols-2">
-            {promos.map((promo, index) => (
+        <div className="bg-white">
+          <div className="mx-auto grid max-w-7xl items-center gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
+            <div className="flex items-center justify-between gap-4">
               <Link
-                key={promo.title}
-                href="/contact"
+                href="/"
                 className={cn(
-                  'flex h-full select-none items-center gap-4 rounded-[2px] border border-neutral-200 bg-[#f7f7f3] px-4 py-3 transition-colors hover:bg-[#f3f3ee]',
-                  index === 0 && 'min-w-[270px]',
+                  'flex select-none items-center transition-all duration-300',
+                  hasScrolled ? 'pointer-events-none -translate-y-2 scale-95 opacity-0' : 'opacity-100',
                 )}
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] bg-white text-xl">
-                  {promo.icon === 'search' ? <Search className="h-5 w-5 text-[#0a8f07]" /> : <Send className="h-5 w-5 text-[#0a8f07]" />}
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[0.95rem] font-semibold leading-5 text-neutral-950">{promo.title}</span>
-                  <span className="mt-0.5 block text-[0.76rem] leading-5 text-neutral-500">{promo.description}</span>
-                </span>
+                <Image
+                  src="/logo.png"
+                  alt="MyNigeria News"
+                  width={160}
+                  height={54}
+                  priority
+                  className="h-auto w-[160px] object-contain"
+                />
               </Link>
-            ))}
+              <button
+                type="button"
+                className={cn(
+                  'inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-neutral-200 transition-all duration-300 lg:hidden',
+                  hasScrolled ? 'pointer-events-none translate-y-2 scale-90 opacity-0' : 'opacity-100',
+                )}
+                onClick={() => setOpen((value) => !value)}
+                aria-label="Toggle navigation menu"
+                aria-expanded={open}
+                aria-controls="mobile-navigation"
+              >
+                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+
+            <div className="hidden gap-3 lg:grid lg:grid-cols-2">
+              {promos.map((promo, index) => (
+                <Link
+                  key={promo.title}
+                  href="/contact"
+                  className={cn(
+                    'flex h-full select-none items-center gap-4 rounded-[2px] border border-neutral-200 bg-[#f7f7f3] px-4 py-3 transition-colors hover:bg-[#f3f3ee]',
+                    index === 0 && 'min-w-[270px]',
+                  )}
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[2px] bg-white text-xl">
+                    {promo.icon === 'search' ? <Search className="h-5 w-5 text-[#0a8f07]" /> : <Send className="h-5 w-5 text-[#0a8f07]" />}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[0.95rem] font-semibold leading-5 text-neutral-950">{promo.title}</span>
+                    <span className="mt-0.5 block text-[0.76rem] leading-5 text-neutral-500">{promo.description}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="relative bg-[#0a8f07] text-white">
+      <div className="sticky top-0 z-50 bg-[#0a8f07] text-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/"
+            className={cn(
+              'flex select-none items-center transition-all duration-300 lg:hidden',
+              hasScrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-2 opacity-0',
+            )}
+          >
+            <Image
+              src="/logo.png"
+              alt="MyNigeria News"
+              width={132}
+              height={44}
+              className="h-auto w-[132px] object-contain brightness-0 invert"
+            />
+          </Link>
           <nav className="hidden flex-1 items-center gap-1 py-3 lg:flex">
             {navItems.map((item) => (
                 <Link
@@ -160,6 +196,19 @@ export function SiteHeader() {
             >
               <User className="h-4 w-4" />
             </Button>
+            <button
+              type="button"
+              className={cn(
+                'inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-white/20 bg-white/10 text-white transition-all duration-300 lg:hidden',
+                hasScrolled ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-2 opacity-0',
+              )}
+              onClick={() => setOpen((value) => !value)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
 
@@ -202,10 +251,9 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <BreakingTicker />
       <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
       <div className="sr-only">Active section {activeLabel}</div>
-    </header>
+    </>
   )
 }

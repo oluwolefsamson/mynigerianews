@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
+import { BreakingTicker } from '@/components/breaking-ticker'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { siteName } from '@/data/news'
@@ -40,6 +41,7 @@ export default function RootLayout({
     <html lang="en-NG">
       <body className="min-h-screen bg-white text-neutral-950 antialiased">
         <SiteHeader />
+        <BreakingTicker />
         {children}
         <SiteFooter />
       </body>
