@@ -1,10 +1,18 @@
+'use client'
+
 import { Clock4, Megaphone } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 import { breakingItems } from '@/data/news'
 
 export function BreakingTicker() {
   return (
-    <div className="border-b border-neutral-200 bg-white">
+    <motion.div
+      className="border-b border-neutral-200 bg-white"
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+    >
       <div className="mx-auto flex max-w-7xl items-stretch gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="inline-flex items-center gap-2 rounded-[2px] bg-[#ecf6eb] px-4 py-3 text-[12px] font-semibold text-neutral-950">
           <Megaphone className="h-3.5 w-3.5 text-[#0a8f07]" />
@@ -21,10 +29,15 @@ export function BreakingTicker() {
           </div>
         </div>
         <div className="hidden items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-neutral-400 md:inline-flex">
+          {/* Animated pulse dot */}
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0a8f07] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0a8f07]" />
+          </span>
           <Clock4 className="h-3.5 w-3.5" />
           Live
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

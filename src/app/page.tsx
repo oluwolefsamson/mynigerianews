@@ -7,6 +7,7 @@ import { NewsCard } from '@/components/news-card'
 import { NewsImage } from '@/components/news-image'
 import { AdvertBlock, NewsletterCard } from '@/components/sidebar-widget'
 import { Button } from '@/components/ui/button'
+import { AnimatedSection, AnimatedGrid, AnimatedItem } from '@/components/animated-section'
 import { getHomePageContent } from '@/services/cms'
 import { articles, getArticleBySlug, navCategories } from '@/data/news'
 import { absoluteUrl } from '@/lib/metadata'
@@ -189,53 +190,58 @@ export default function HomePage() {
 
   return (
     <main>
+      {/* ── Hero ── */}
       <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <AnimatedGrid className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             {lead ? (
-              <Link href={`/article/${lead.slug}`} className="group block select-none h-full">
-                <div className="relative h-full min-h-[320px] overflow-hidden bg-neutral-100 lg:min-h-[340px]">
-                  <NewsImage
-                    src={lead.image}
-                    alt={lead.imageAlt}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                    <p className="text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-white/90">{lead.category}</p>
-                    <h1 className="mt-2 max-w-2xl text-[1.85rem] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[2.4rem]">
-                      {lead.title}
-                    </h1>
+              <AnimatedItem>
+                <Link href={`/article/${lead.slug}`} className="group block select-none h-full">
+                  <div className="relative h-full min-h-[320px] overflow-hidden bg-neutral-100 lg:min-h-[340px]">
+                    <NewsImage
+                      src={lead.image}
+                      alt={lead.imageAlt}
+                      fill
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 58vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                      <p className="text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-white/90">{lead.category}</p>
+                      <h1 className="mt-2 max-w-2xl text-[1.85rem] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[2.4rem]">
+                        {lead.title}
+                      </h1>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </AnimatedItem>
             ) : null}
 
             <div className="grid grid-cols-2 grid-rows-2 gap-4">
               {leadRight.map((article) => (
-                <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none h-full">
-                  <div className="relative h-full min-h-[145px] overflow-hidden bg-neutral-100">
-                    <NewsImage
-                      src={article.image}
-                      alt={article.imageAlt}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 22vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-black/8 to-transparent" />
-                    <div className="absolute inset-x-0 bottom-0 bg-black/28 p-2.5 backdrop-blur-[1px]">
-                      <h3 className="line-clamp-2 text-[0.88rem] font-semibold leading-5 text-white">{article.title}</h3>
+                <AnimatedItem key={article.slug}>
+                  <Link href={`/article/${article.slug}`} className="group block select-none h-full">
+                    <div className="relative h-full min-h-[145px] overflow-hidden bg-neutral-100">
+                      <NewsImage
+                        src={article.image}
+                        alt={article.imageAlt}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 22vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-black/8 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 bg-black/28 p-2.5 backdrop-blur-[1px]">
+                        <h3 className="line-clamp-2 text-[0.88rem] font-semibold leading-5 text-white">{article.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </AnimatedItem>
               ))}
             </div>
-          </div>
+          </AnimatedGrid>
 
-          <aside className="space-y-4">
+          <AnimatedSection as="aside" className="space-y-4" delay={0.15}>
             <div className="border border-neutral-200 bg-white px-4 py-3">
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-9 items-center border-r border-neutral-200 pr-3 text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-[#0a8f07]">
@@ -255,75 +261,80 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </aside>
+          </AnimatedSection>
         </div>
       </section>
 
+      {/* ── Trending ── */}
       <section className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
-        <SectionTitle title="Trending News" />
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <AnimatedSection><SectionTitle title="Trending News" /></AnimatedSection>
+        <AnimatedGrid className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {trending.map((article) => (
             <NewsCard key={article.slug} article={article} compact />
           ))}
-        </div>
+        </AnimatedGrid>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {sponsoredBanners.map((banner) => (
-            <SponsoredBannerCard key={banner.label} banner={banner} />
-          ))}
-        </div>
-      </section>
+      {/* ── Sponsored banners row ── */}
+      <AnimatedGrid className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {sponsoredBanners.map((banner) => (
+          <AnimatedItem key={banner.label}>
+            <SponsoredBannerCard banner={banner} />
+          </AnimatedItem>
+        ))}
+      </AnimatedGrid>
 
+      {/* ── Sports ── */}
       <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <AnimatedSection className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
           <div className="border border-neutral-200 bg-white p-4 sm:p-5">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
               <h2 className="section-title text-[1rem] font-semibold uppercase text-neutral-950">Sports</h2>
               <span className="text-[0.72rem] uppercase tracking-[0.1em] text-neutral-400">Show All -&gt;</span>
             </div>
-            <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <AnimatedGrid className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
               {sports.map((article) => (
                 <NewsCard key={article.slug} article={article} />
               ))}
-            </div>
+            </AnimatedGrid>
           </div>
-
           <div className="space-y-4">
             <AdvertBlock />
             <NewsletterCard />
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
+      {/* ── Weekly Review ── */}
       <section className="mt-12 bg-[#fbf2f2]">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <AnimatedSection className="flex items-center justify-between">
             <h2 className="section-title text-[1rem] font-semibold uppercase text-neutral-950">{home.weeklyReview.title}</h2>
             <span className="text-[0.72rem] uppercase tracking-[0.1em] text-neutral-400">Show All -&gt;</span>
-          </div>
+          </AnimatedSection>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <AnimatedGrid className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {weeklyArticles.map((article) => (
-              <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none bg-white p-3">
-                <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
-                  <NewsImage
-                    src={article.image}
-                    alt={article.imageAlt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 25vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-                <div className="mt-3">
-                  <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{article.category}</p>
-                  <h3 className="mt-1 text-[0.94rem] font-medium leading-6 text-neutral-950">{article.title}</h3>
-                  <p className="mt-1 text-[0.8rem] text-neutral-500">{article.readTime}</p>
-                </div>
-              </Link>
+              <AnimatedItem key={article.slug}>
+                <Link href={`/article/${article.slug}`} className="group block select-none bg-white p-3">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
+                    <NewsImage
+                      src={article.image}
+                      alt={article.imageAlt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{article.category}</p>
+                    <h3 className="mt-1 text-[0.94rem] font-medium leading-6 text-neutral-950">{article.title}</h3>
+                    <p className="mt-1 text-[0.8rem] text-neutral-500">{article.readTime}</p>
+                  </div>
+                </Link>
+              </AnimatedItem>
             ))}
-          </div>
+          </AnimatedGrid>
         </div>
       </section>
 
@@ -481,28 +492,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {portalCategoryBlocks.map((block) => (
-            <PortalCategoryBlock key={block.slug} block={block} />
-          ))}
-        </div>
-      </section>
+      {/* ── Category blocks ── */}
+      <AnimatedGrid className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        {portalCategoryBlocks.map((block) => (
+          <AnimatedItem key={block.slug}>
+            <PortalCategoryBlock block={block} />
+          </AnimatedItem>
+        ))}
+      </AnimatedGrid>
 
-      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {navCategories.map((category) => (
+      {/* ── Browse by category ── */}
+      <AnimatedGrid className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {navCategories.map((category) => (
+          <AnimatedItem key={category.slug}>
             <Link
-              key={category.slug}
               href={`/category/${category.slug}`}
-              className="select-none border border-neutral-200 bg-white p-4 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
+              className="block select-none border border-neutral-200 bg-white p-4 transition-all duration-200 hover:border-neutral-300 hover:bg-neutral-50 hover:-translate-y-0.5 hover:shadow-sm"
             >
               <p className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{category.label}</p>
               <p className="mt-2 text-[0.92rem] leading-6 text-neutral-700">{category.description}</p>
             </Link>
-          ))}
-        </div>
-      </section>
+          </AnimatedItem>
+        ))}
+      </AnimatedGrid>
 
       <script
         type="application/ld+json"
