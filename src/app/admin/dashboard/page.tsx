@@ -5,36 +5,43 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-async function getStats(supabase: Awaited<ReturnType<typeof createClient>>) {
+export default async function DashboardPage() {
+  const supabase = await createClient()
+
+  // Fetch all stats, recent articles, and import logs in parallel to minimize load time
   const [
-    { count: totalArticles },
-    { count: published },
-    { count: drafts },
-    { count: imported },
+    totalArticlesRes,
+    publishedRes,
+    draftsRes,
+    importedRes,
+    recentArticlesRes,
+    importLogRes,
   ] = await Promise.all([
     supabase.from('articles').select('*', { count: 'exact', head: true }),
     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
     supabase.from('articles').select('*', { count: 'exact', head: true }).eq('source', 'rss'),
+    supabase
+      .from('articles')
+      .select('id, title, category, status, source_name, created_at')
+      .order('created_at', { ascending: false })
+      .limit(8),
+    supabase
+      .from('import_log')
+      .select('*')
+      .order('ran_at', { ascending: false })
+      .limit(5),
   ])
-  return { totalArticles: totalArticles ?? 0, published: published ?? 0, drafts: drafts ?? 0, imported: imported ?? 0 }
-}
 
-export default async function DashboardPage() {
-  const supabase = await createClient()
-  const stats = await getStats(supabase)
+  const stats = {
+    totalArticles: totalArticlesRes.count ?? 0,
+    published: publishedRes.count ?? 0,
+    drafts: draftsRes.count ?? 0,
+    imported: importedRes.count ?? 0,
+  }
 
-  const { data: recentArticles } = await supabase
-    .from('articles')
-    .select('id, title, category, status, source_name, created_at')
-    .order('created_at', { ascending: false })
-    .limit(8)
-
-  const { data: importLog } = await supabase
-    .from('import_log')
-    .select('*')
-    .order('ran_at', { ascending: false })
-    .limit(5)
+  const recentArticles = recentArticlesRes.data
+  const importLog = importLogRes.data
 
   const statCards = [
     { label: 'Total Articles', value: stats.totalArticles, icon: Newspaper, color: 'bg-blue-500', light: 'bg-blue-50 text-blue-600' },
