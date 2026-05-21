@@ -79,7 +79,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <span className="text-neutral-950">{article.title}</span>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+
         <article>
           <header className="max-w-4xl">
             <Badge className="border-[#0a8f07]/20 bg-[#0a8f07]/5 text-[#0a8f07]">{article.category}</Badge>
@@ -123,7 +123,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div>
               <div className="article-content max-w-3xl">
                 {article.content.map((paragraph) => (
@@ -211,7 +211,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </aside>
           </div>
         </article>
-      </div>
+
 
       <script
         type="application/ld+json"
