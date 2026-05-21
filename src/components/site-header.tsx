@@ -11,6 +11,7 @@ import { Search, Send, Menu, User, X, Facebook, Instagram, Twitter, Youtube } fr
 import { GlobalSearch } from '@/components/global-search'
 import { Button } from '@/components/ui/button'
 import { getHeaderContent } from '@/services/cms'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
 export function SiteHeader() {
@@ -21,6 +22,22 @@ export function SiteHeader() {
   const [hasScrolled, setHasScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [now, setNow] = useState<Date>(new Date())
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -216,17 +233,29 @@ export function SiteHeader() {
             >
               <Search className="h-4 w-4" />
             </Button>
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white transition-all duration-200 hover:scale-105"
-              aria-label="Account"
-            >
-              <Link href="/dashboard">
-                <User className="h-4 w-4" />
-              </Link>
-            </Button>
+            {user ? (
+              <Button
+                asChild
+                variant="ghost"
+                className="h-9 gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 text-[11px] sm:text-xs font-semibold text-white hover:bg-white/15 hover:text-white transition-all duration-200 hover:scale-105"
+              >
+                <Link href="/dashboard">
+                  <User className="h-3.5 w-3.5" />
+                  <span>Dashboard</span>
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                asChild
+                variant="ghost"
+                className="h-9 gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 text-[11px] sm:text-xs font-semibold text-white hover:bg-white/15 hover:text-white transition-all duration-200 hover:scale-105"
+              >
+                <Link href="/login">
+                  <User className="h-3.5 w-3.5" />
+                  <span>Sign In</span>
+                </Link>
+              </Button>
+            )}
             <button
               type="button"
               className={cn(
