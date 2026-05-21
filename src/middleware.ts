@@ -62,9 +62,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Protect all /dashboard and /dashboard/* routes
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // If logged-in user visits /login or /signup, redirect to dashboard
+  if ((pathname === '/login' || pathname === '/signup') && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
+
   return supabaseResponse
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/dashboard',
+    '/dashboard/:path*',
+    '/login',
+    '/signup'
+  ],
 }

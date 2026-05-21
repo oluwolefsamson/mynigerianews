@@ -217,12 +217,15 @@ export function SiteHeader() {
               <Search className="h-4 w-4" />
             </Button>
             <Button
+              asChild
               variant="ghost"
               size="icon"
               className="h-9 w-9 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white transition-all duration-200 hover:scale-105"
               aria-label="Account"
             >
-              <User className="h-4 w-4" />
+              <Link href="/dashboard">
+                <User className="h-4 w-4" />
+              </Link>
             </Button>
             <button
               type="button"
