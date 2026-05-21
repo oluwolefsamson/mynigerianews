@@ -32,18 +32,24 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+import { headers } from 'next/headers'
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
+  const headersList = await headers()
+  const pathname = headersList.get('x-current-path') ?? ''
+  const isAdmin = pathname.startsWith('/admin')
+
   return (
     <html lang="en-NG">
       <body className="min-h-screen bg-white text-neutral-950 antialiased">
-        <SiteHeader />
-        <BreakingTicker />
+        {!isAdmin && <SiteHeader />}
+        {!isAdmin && <BreakingTicker />}
         {children}
-        <SiteFooter />
+        {!isAdmin && <SiteFooter />}
       </body>
     </html>
   )

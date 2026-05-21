@@ -179,7 +179,7 @@ export function SiteHeader() {
           <nav className="hidden flex-1 items-center gap-1 py-3 lg:flex">
             {navItems.map((item, i) => (
               <motion.div
-                key={item.href}
+                key={`${item.label}-${item.href}`}
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
@@ -263,7 +263,7 @@ export function SiteHeader() {
                 <nav className="mt-4 grid gap-2 sm:grid-cols-2">
                   {navItems.map((item, i) => (
                     <motion.div
-                      key={item.href}
+                      key={`${item.label}-${item.href}`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.28, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
