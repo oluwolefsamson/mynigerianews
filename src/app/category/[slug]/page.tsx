@@ -13,9 +13,6 @@ import { getCategoryPageContent } from '@/services/cms'
 import { getArticlesByCategory } from '@/data/news'
 import { absoluteUrl } from '@/lib/metadata'
 
-export function generateStaticParams() {
-  return getCategoryPageContent().map((category) => ({ slug: category.slug }))
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params

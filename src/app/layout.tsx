@@ -8,6 +8,8 @@ import { siteName } from '@/data/news'
 import { absoluteUrl } from '@/lib/metadata'
 import './globals.css'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   metadataBase: new URL(absoluteUrl('/')),
   title: {

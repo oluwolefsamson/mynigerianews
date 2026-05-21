@@ -16,9 +16,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { articles, getArticleBySlug, getRelatedArticles } from '@/data/news'
 import { absoluteUrl } from '@/lib/metadata'
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }))
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
