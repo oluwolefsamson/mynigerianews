@@ -57,6 +57,32 @@ function splitItems(xml: string): string[] {
   return items
 }
 
+export function cleanHtmlText(text: string): string {
+  if (!text) return ''
+  
+  return text
+    // 1. Strip all HTML tags
+    .replace(/<[^>]*>/g, '')
+    // 2. Decode common HTML entities
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8230;/g, '...')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    // 3. Remove typical RSS feed signatures
+    .replace(/The post .* appeared first on .*/gi, '')
+    // 4. Remove trailing read more links and URLs
+    .replace(/Read More:\s*https?:\/\/\S+/gi, '')
+    .replace(/https?:\/\/\S+/gi, '')
+    // 5. Clean up duplicate spaces
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export async function parseRssFeed(url: string): Promise<RssItem[]> {
   try {
     const res = await fetch(url, {
@@ -73,14 +99,19 @@ export async function parseRssFeed(url: string): Promise<RssItem[]> {
     const xml = await res.text()
     const items = splitItems(xml)
 
-    return items.map((item) => ({
-      title: extractText(item, 'title'),
-      link: extractText(item, 'link') || extractText(item, 'guid'),
-      description: extractText(item, 'description'),
-      pubDate: extractText(item, 'pubDate'),
-      imageUrl: extractImage(item),
-      guid: extractText(item, 'guid') || extractText(item, 'link'),
-    })).filter((it) => it.title && it.link)
+    return items.map((item) => {
+      const rawTitle = extractText(item, 'title')
+      const rawDesc = extractText(item, 'description')
+      
+      return {
+        title: cleanHtmlText(rawTitle),
+        link: extractText(item, 'link') || extractText(item, 'guid'),
+        description: cleanHtmlText(rawDesc),
+        pubDate: extractText(item, 'pubDate'),
+        imageUrl: extractImage(item),
+        guid: extractText(item, 'guid') || extractText(item, 'link'),
+      }
+    }).filter((it) => it.title && it.link)
   } catch (e) {
     console.error(`RSS fetch error for ${url}:`, e)
     return []
