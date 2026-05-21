@@ -250,8 +250,8 @@ export function SiteHeader() {
               exit={{ x: '-100%', opacity: 0 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] as const }}
             >
-              <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-6 pt-4 sm:px-6">
-                <div className="flex items-center justify-between border-b border-white/15 pb-4">
+              <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-6 sm:px-6">
+                <div className="sticky top-0 z-20 flex items-center justify-between border-b border-white/15 bg-[#0a8f07] pb-4 pt-4">
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">Menu</span>
                   <button
                     type="button"
@@ -283,6 +283,15 @@ export function SiteHeader() {
                     </motion.div>
                   ))}
                 </nav>
+                <div className="mt-8 border-t border-white/10 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="w-full rounded-[2px] border border-white/20 bg-white/10 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-white/25 active:scale-95"
+                  >
+                    Back to Page
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
