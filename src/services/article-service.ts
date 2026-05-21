@@ -23,6 +23,7 @@ type ArticleRow = {
   published_at: string | null
   created_at: string
   updated_at: string
+  views_count?: number
 }
 
 const CATEGORY_SLUG_MAP: Record<string, CategorySlug> = {
@@ -47,6 +48,7 @@ function mapRowToArticle(row: ArticleRow): NewsArticle {
     : ['']
 
   return {
+    id: row.id,
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt ?? row.title,
@@ -63,6 +65,7 @@ function mapRowToArticle(row: ArticleRow): NewsArticle {
     tags: [row.category],
     content: contentParagraphs,
     related: [],
+    views_count: row.views_count ?? 0,
   }
 }
 

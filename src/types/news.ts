@@ -30,6 +30,8 @@ export type NewsArticle = {
   bullets?: string[]
   related: string[]
   sourceUrl?: string | null
+  id?: string
+  views_count?: number
 }
 
 export type CategoryDefinition = {
