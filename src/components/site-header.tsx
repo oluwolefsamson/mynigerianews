@@ -53,7 +53,7 @@ export function SiteHeader() {
         className="bg-white"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
       >
         <div className="bg-[#151515] text-white">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] font-medium sm:px-6 lg:px-8">
@@ -137,7 +137,7 @@ export function SiteHeader() {
                   key={promo.title}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.4, delay: 0.1 + index * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
                 >
                   <Link
                     href="/contact"
@@ -184,7 +184,7 @@ export function SiteHeader() {
                 key={`${item.label}-${item.href}`}
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.3, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] as const }}
               >
                 <Link
                   href={item.href}
@@ -248,7 +248,7 @@ export function SiteHeader() {
               initial={{ x: '-100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '-100%', opacity: 0 }}
-              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] as const }}
             >
               <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-6 pt-4 sm:px-6">
                 <div className="flex items-center justify-between border-b border-white/15 pb-4">
@@ -268,7 +268,7 @@ export function SiteHeader() {
                       key={`${item.label}-${item.href}`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.28, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.28, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] as const }}
                     >
                       <Link
                         href={item.href}

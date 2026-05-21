@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { Clock3 } from 'lucide-react'
+import { Clock3, CalendarDays } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 import { Badge } from '@/components/ui/badge'
@@ -16,7 +16,23 @@ type NewsCardProps = {
   compact?: boolean
 }
 
+function formatShortDate(dateString: string): string {
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    return new Intl.DateTimeFormat('en-NG', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(date)
+  } catch {
+    return ''
+  }
+}
+
 export function NewsCard({ article, compact }: NewsCardProps) {
+  const date = formatShortDate(article.publishedAt)
+
   if (compact) {
     return (
       <motion.div variants={fadeInUp}>
@@ -39,7 +55,13 @@ export function NewsCard({ article, compact }: NewsCardProps) {
               <Clock3 className="h-3.5 w-3.5" />
               <span>{article.readTime}</span>
             </div>
-            <h3 className="mt-2 text-[0.96rem] font-medium leading-6 tracking-[-0.01em] text-neutral-950 transition-colors duration-200 group-hover:text-[#0a8f07]">
+            {date && (
+              <div className="mt-1 flex items-center gap-1 text-[11px] text-neutral-400">
+                <CalendarDays className="h-3 w-3" />
+                <span suppressHydrationWarning>{date}</span>
+              </div>
+            )}
+            <h3 className="mt-1.5 text-[0.96rem] font-medium leading-6 tracking-[-0.01em] text-neutral-950 transition-colors duration-200 group-hover:text-[#0a8f07]">
               {article.title}
             </h3>
           </div>
@@ -68,7 +90,13 @@ export function NewsCard({ article, compact }: NewsCardProps) {
             <Clock3 className="h-3.5 w-3.5" />
             <span>{article.readTime}</span>
           </div>
-          <h3 className={cn('mt-2 text-[0.98rem] font-semibold leading-[1.35] tracking-[-0.02em] text-neutral-950 transition-colors duration-200 group-hover:text-[#0a8f07]')}>
+          {date && (
+            <div className="mt-1 flex items-center gap-1 text-[11px] text-neutral-400">
+              <CalendarDays className="h-3 w-3" />
+              <span suppressHydrationWarning>{date}</span>
+            </div>
+          )}
+          <h3 className={cn('mt-1.5 text-[0.98rem] font-semibold leading-[1.35] tracking-[-0.02em] text-neutral-950 transition-colors duration-200 group-hover:text-[#0a8f07]')}>
             {article.title}
           </h3>
           <p className="mt-2 text-[0.92rem] leading-6 text-neutral-600">{article.excerpt}</p>

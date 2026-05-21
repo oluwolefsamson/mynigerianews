@@ -64,6 +64,20 @@ const sponsoredBanners: SponsoredBannerData[] = [
   },
 ]
 
+function formatDate(dateString: string): string {
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    return new Intl.DateTimeFormat('en-NG', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(date)
+  } catch {
+    return ''
+  }
+}
+
 function SectionTitle({
   title,
   actionHref,
@@ -93,6 +107,9 @@ function StoryStack({ items }: { items: NewsArticle[] }) {
       {items.map((article, index) => (
         <Link key={article.slug} href={`/article/${article.slug}`} className="group block select-none border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
           <p className="text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-[#0a8f07]">{article.category}</p>
+          {formatDate(article.publishedAt) && (
+            <p className="mt-0.5 text-[0.75rem] text-neutral-400">{formatDate(article.publishedAt)}</p>
+          )}
           <h3 className={index === 0 ? 'mt-1 text-[1rem] font-semibold leading-6 text-neutral-950' : 'mt-1 text-[0.94rem] font-medium leading-6 text-neutral-950'}>
             {article.title}
           </h3>
@@ -383,6 +400,9 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-3">
                     <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{article.category}</p>
+                    {formatDate(article.publishedAt) && (
+                      <p className="mt-0.5 text-[0.72rem] text-neutral-400">{formatDate(article.publishedAt)}</p>
+                    )}
                     <h3 className="mt-1 text-[0.94rem] font-medium leading-6 text-neutral-950">{article.title}</h3>
                     <p className="mt-1 text-[0.8rem] text-neutral-500">{article.readTime}</p>
                   </div>
@@ -463,6 +483,9 @@ export default async function HomePage() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{article.category}</p>
+                      {formatDate(article.publishedAt) && (
+                        <p className="mt-0.5 text-[0.72rem] text-neutral-400">{formatDate(article.publishedAt)}</p>
+                      )}
                       <h4 className="mt-1 text-[0.92rem] leading-6 text-neutral-950">{article.title}</h4>
                     </div>
                   </Link>
@@ -476,6 +499,9 @@ export default async function HomePage() {
                 {weeklyArticles.map((article) => (
                   <Link key={article.slug} href={`/article/${article.slug}`} className="block select-none border-b border-neutral-200 pb-3 last:border-0 last:pb-0">
                     <p className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-[#0a8f07]">{article.category}</p>
+                    {formatDate(article.publishedAt) && (
+                      <p className="mt-0.5 text-[0.72rem] text-neutral-400">{formatDate(article.publishedAt)}</p>
+                    )}
                     <p className="mt-1 text-[0.92rem] leading-6 text-neutral-950">{article.title}</p>
                   </Link>
                 ))}

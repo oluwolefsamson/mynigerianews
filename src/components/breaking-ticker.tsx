@@ -31,7 +31,7 @@ export function BreakingTicker() {
       className="border-b border-neutral-200 bg-white"
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
     >
       <div className="mx-auto flex max-w-7xl items-stretch gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="inline-flex items-center gap-2 rounded-[2px] bg-[#ecf6eb] px-4 py-3 text-[12px] font-semibold text-neutral-950">
