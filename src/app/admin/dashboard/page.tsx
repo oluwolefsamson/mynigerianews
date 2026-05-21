@@ -8,30 +8,30 @@ import Link from 'next/link'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Fetch all stats, recent articles, and import logs in parallel to minimize load time
-  const [
-    totalArticlesRes,
-    publishedRes,
-    draftsRes,
-    importedRes,
-    recentArticlesRes,
-    importLogRes,
-  ] = await Promise.all([
-    supabase.from('articles').select('*', { count: 'exact', head: true }),
-    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
-    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
-    supabase.from('articles').select('*', { count: 'exact', head: true }).eq('source', 'rss'),
-    supabase
-      .from('articles')
-      .select('id, title, category, status, source_name, created_at')
-      .order('created_at', { ascending: false })
-      .limit(8),
-    supabase
-      .from('import_log')
-      .select('*')
-      .order('ran_at', { ascending: false })
-      .limit(5),
+  // Fetch all stats and data lists in parallel using nested Promise.all to preserve strict type safety
+  const [statsRes, listsRes] = await Promise.all([
+    Promise.all([
+      supabase.from('articles').select('*', { count: 'exact', head: true }),
+      supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'published'),
+      supabase.from('articles').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+      supabase.from('articles').select('*', { count: 'exact', head: true }).eq('source', 'rss'),
+    ]),
+    Promise.all([
+      supabase
+        .from('articles')
+        .select('id, title, category, status, source_name, created_at')
+        .order('created_at', { ascending: false })
+        .limit(8),
+      supabase
+        .from('import_log')
+        .select('*')
+        .order('ran_at', { ascending: false })
+        .limit(5),
+    ]),
   ])
+
+  const [totalArticlesRes, publishedRes, draftsRes, importedRes] = statsRes
+  const [recentArticlesRes, importLogRes] = listsRes
 
   const stats = {
     totalArticles: totalArticlesRes.count ?? 0,
