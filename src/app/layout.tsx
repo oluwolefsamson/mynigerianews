@@ -15,8 +15,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 5,
 }
-
-export const metadata: Metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(absoluteUrl('/')),
   title: {
     default: `${siteName} - Nigerian News, Politics, Business and Sports`,
@@ -50,6 +49,8 @@ export default async function RootLayout({
   const headersList = await headers()
   const pathname = headersList.get('x-current-path') ?? ''
   const isAdmin = pathname.startsWith('/admin')
+  const isAuthPage = pathname === '/login' || pathname === '/signup'
+  const hideShell = isAdmin || isAuthPage
 
   return (
     <html lang="en-NG">
@@ -57,10 +58,10 @@ export default async function RootLayout({
 
 
       <body className="min-h-screen bg-white text-neutral-950 antialiased">
-        {!isAdmin && <SiteHeader />}
-        {!isAdmin && <BreakingTicker />}
+        {!hideShell && <SiteHeader />}
+        {!hideShell && <BreakingTicker />}
         {children}
-        {!isAdmin && <SiteFooter />}
+        {!hideShell && <SiteFooter />}
       </body>
     </html>
   )
