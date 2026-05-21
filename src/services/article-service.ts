@@ -154,11 +154,30 @@ export async function getBreakingNewsItems(): Promise<string[]> {
 }
 
 /**
- * Automatically fetch, parse, and categorize dynamic free news from RSS feeds
- * twice daily (12h caching) on-the-fly, returning up to 150 items.
- * Does not write anything to the database!
+ * Automatically fetch, parse, and categorize dynamic free news from RSS feeds.
+ * Optimisation: First tries to load imported RSS articles directly from the Supabase DB
+ * for ultra-fast, robust load times. If empty, falls back to parsing feeds on-the-fly.
  */
 export async function fetchRssAutoNews(): Promise<NewsArticle[]> {
+  try {
+    // 1. Try fetching directly from the Supabase Database first
+    const supabase = createAdminClient()
+    const { data: dbRssRows, error: dbRssError } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('source', 'rss')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(30)
+
+    if (!dbRssError && dbRssRows && dbRssRows.length >= 8) {
+      return (dbRssRows as ArticleRow[]).map(mapRowToArticle)
+    }
+  } catch (dbErr) {
+    console.warn('DB RSS fetch fallback to on-the-fly:', dbErr)
+  }
+
+  // 2. Fallback: Parse on-the-fly if database is empty or queries fail
   const feeds = [
     { name: 'Punch', url: 'https://punchng.com/feed/' },
     { name: 'Vanguard', url: 'https://www.vanguardngr.com/feed/' },
@@ -234,7 +253,7 @@ export async function fetchRssAutoNews(): Promise<NewsArticle[]> {
       }
     }
   } catch (e) {
-    console.error('Error in fetchRssAutoNews:', e)
+    console.error('Error in fetchRssAutoNews on-the-fly:', e)
   }
 
   // Sort by published date descending

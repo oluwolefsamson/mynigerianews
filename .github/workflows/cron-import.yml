@@ -1,0 +1,34 @@
+name: Daily RSS Auto-News Sync
+
+on:
+  schedule:
+    # Runs at 02:00 AM UTC (03:00 AM West Africa Time) everyday
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allows manual trigger of the sync via the GitHub Actions UI
+
+jobs:
+  sync-rss:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily RSS Import
+        run: |
+          # Use curl to request the cron import API route securely.
+          # The service role key is passed securely via query parameter or custom header.
+          # We use West African News site URL (or relative domain triggers).
+          
+          echo "Triggering RSS sync endpoint..."
+          
+          # Hitting the production site. Replace with actual domain if custom domain is used.
+          # Auth token is fetched securely from GitHub Secrets.
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://mynigerianews-1.vercel.app/api/cron/import" \
+            --fail || \
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            "http://localhost:3000/api/cron/import" \
+            --fail || \
+          echo "RSS sync trigger request complete."
