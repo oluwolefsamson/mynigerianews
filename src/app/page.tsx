@@ -281,8 +281,8 @@ export default async function HomePage() {
     <main>
       {/* ── Hero ── */}
       <section className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
-          <AnimatedGrid className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+          <AnimatedGrid className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             {lead ? (
               <AnimatedItem>
                 <Link href={`/article/${lead.slug}`} className="group block select-none">
