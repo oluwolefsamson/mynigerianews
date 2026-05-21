@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus, Pencil, Trash2, Globe, Rss } from 'lucide-react'
+import { DeleteArticleButton } from '@/components/admin/delete-article-button'
 
 export default async function ArticlesPage({
   searchParams,
@@ -131,23 +132,5 @@ export default async function ArticlesPage({
         </table>
       </div>
     </div>
-  )
-}
-
-function DeleteArticleButton({ id }: { id: string }) {
-  return (
-    <form action={`/api/admin/articles?id=${id}`} method="POST">
-      <input type="hidden" name="_method" value="DELETE" />
-      <button
-        type="submit"
-        className="flex h-7 w-7 items-center justify-center rounded-lg border border-red-200 text-red-400 hover:bg-red-50"
-        aria-label="Delete"
-        onClick={(e) => {
-          if (!confirm('Delete this article?')) e.preventDefault()
-        }}
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </button>
-    </form>
   )
 }

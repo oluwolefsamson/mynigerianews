@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
 import { AdminTopbar } from '@/components/admin/admin-topbar'
 
+export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Admin — MyNigeriaNews' }
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
