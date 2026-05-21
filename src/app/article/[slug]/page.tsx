@@ -14,12 +14,15 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { articles, getArticleBySlug, getRelatedArticles } from '@/data/news'
+import { getArticleBySlugFromDB, getArticlesByCategoryFromDB, findRssArticleBySlug } from '@/services/article-service'
 import { absoluteUrl } from '@/lib/metadata'
+
+export const dynamic = 'force-dynamic'
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlugFromDB(slug) ?? getArticleBySlug(slug) ?? await findRssArticleBySlug(slug)
   if (!article) return {}
 
   return {
@@ -41,10 +44,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlugFromDB(slug) ?? getArticleBySlug(slug) ?? await findRssArticleBySlug(slug)
   if (!article) notFound()
 
-  const related = getRelatedArticles(article).slice(0, 3)
+  // Get related articles: try same category from DB, fallback to static
+  const dbRelated = await getArticlesByCategoryFromDB(article.category, 4)
+  const staticRelated = article.related?.length ? getRelatedArticles(article).slice(0, 3) : []
+  const related = dbRelated.filter((r) => r.slug !== article.slug).slice(0, 3).length > 0
+    ? dbRelated.filter((r) => r.slug !== article.slug).slice(0, 3)
+    : staticRelated
   const mostRead = articles.slice(0, 4).map((item) => ({
     title: item.title,
     href: `/article/${item.slug}`,
@@ -91,18 +99,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
           </header>
 
-          <div className="mt-7 overflow-hidden rounded-[2px] border border-neutral-200">
-            <div className="relative aspect-[16/9]">
-              <NewsImage
-                src={article.image}
-                alt={article.imageAlt}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 720px"
+          {article.video_url ? (
+            <div className="mt-7 overflow-hidden rounded-[2px] border border-neutral-200 bg-black aspect-[16/9]">
+              <video
+                src={article.video_url}
+                controls
+                className="w-full h-full object-contain"
+                poster={article.image}
               />
             </div>
-          </div>
+          ) : (
+            <div className="mt-7 overflow-hidden rounded-[2px] border border-neutral-200">
+              <div className="relative aspect-[16/9]">
+                <NewsImage
+                  src={article.image}
+                  alt={article.imageAlt}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 720px"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_260px]">
             <div>
@@ -170,6 +189,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   <p><span className="font-medium text-neutral-950">Published:</span> {date}</p>
                   <p><span className="font-medium text-neutral-950">Reading time:</span> {article.readTime}</p>
                   <p><span className="font-medium text-neutral-950">Tags:</span> {article.tags.join(', ')}</p>
+                  {article.sourceUrl && (
+                    <p>
+                      <span className="font-medium text-neutral-950">Source: </span>
+                      <a
+                        href={article.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#0a8f07] underline underline-offset-2 hover:opacity-80"
+                      >
+                        Original article ↗
+                      </a>
+                    </p>
+                  )}
                 </CardContent>
               </Card>
               <MostReadList items={mostRead} />

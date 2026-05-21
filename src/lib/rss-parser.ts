@@ -60,10 +60,16 @@ function splitItems(xml: string): string[] {
 export async function parseRssFeed(url: string): Promise<RssItem[]> {
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'MyNigeriaNews/1.0 RSS Reader' },
-      next: { revalidate: 0 },
+      headers: { 
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/xml, text/xml, */*'
+      },
+      next: { revalidate: 43200 }, // Caches for 12 hours (twice a day)
     })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    if (!res.ok) {
+      console.warn(`RSS fetch returned status ${res.status} for ${url}`)
+      return []
+    }
     const xml = await res.text()
     const items = splitItems(xml)
 

@@ -4,14 +4,18 @@ import type { LucideIcon } from 'lucide-react'
 import { Building2, CarFront, ChevronRight, Play, Briefcase } from 'lucide-react'
 
 import { NewsCard } from '@/components/news-card'
+import { AutoNewsFeed } from '@/components/auto-news-feed'
 import { NewsImage } from '@/components/news-image'
 import { AdvertBlock, NewsletterCard } from '@/components/sidebar-widget'
 import { Button } from '@/components/ui/button'
 import { AnimatedSection, AnimatedGrid, AnimatedItem } from '@/components/animated-section'
 import { getHomePageContent } from '@/services/cms'
-import { articles, getArticleBySlug, navCategories } from '@/data/news'
+import { articles as staticArticles, getArticleBySlug, navCategories } from '@/data/news'
+import { getPublishedArticles, fetchRssAutoNews } from '@/services/article-service'
 import { absoluteUrl } from '@/lib/metadata'
 import type { NewsArticle } from '@/types/news'
+
+export const dynamic = 'force-dynamic'
 
 function isDefined<T>(value: T | undefined): value is T {
   return value !== undefined
@@ -170,23 +174,91 @@ function SponsoredBannerCard({ banner, compact = false }: { banner: SponsoredBan
   )
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   const home = getHomePageContent()
-  const lead = getArticleBySlug(home.hero.leadSlug)
-  const leadRight = home.hero.sideSlugs.map((slug) => getArticleBySlug(slug)).filter(isDefined)
 
-  const trending = home.trending.slugs.map((slug) => getArticleBySlug(slug)).filter(isDefined)
-  const sports = home.sports.slugs.map((slug) => getArticleBySlug(slug)).filter(isDefined)
-  const editorPicks = home.editorPicks.slugs.map((slug) => getArticleBySlug(slug)).filter(isDefined)
-  const featuredPosts = home.featuredPosts.slugs.map((slug) => getArticleBySlug(slug)).filter(isDefined)
-  const weeklyArticles = editorPicks.slice(0, 4)
+  // 1. Fetch manually published articles from DB (highest priority)
+  const dbArticles = await getPublishedArticles(30)
 
-  const portalCategoryBlocks: PortalCategoryBlockData[] = home.categoryBlocks.map((block) => ({
-    slug: block.slug,
-    label: block.label,
-    featured: getArticleBySlug(block.featuredSlug) ?? articles[0],
-    list: block.listSlugs.map((slug) => getArticleBySlug(slug)).filter(isDefined),
-  }))
+  // 2. Fetch automated free news feeds on-the-fly (cached 12h/twice daily, no DB writes)
+  const rssArticles = await fetchRssAutoNews()
+
+  // Merge & Deduplicate: DB articles -> RSS articles -> Static fallback articles
+  const mergedPool: NewsArticle[] = []
+  const seenSlugs = new Set<string>()
+
+  // Add DB articles
+  for (const art of dbArticles) {
+    if (!seenSlugs.has(art.slug)) {
+      seenSlugs.add(art.slug)
+      mergedPool.push(art)
+    }
+  }
+
+  // Add RSS articles
+  for (const art of rssArticles) {
+    if (!seenSlugs.has(art.slug)) {
+      seenSlugs.add(art.slug)
+      mergedPool.push(art)
+    }
+  }
+
+  // Add static fallback articles
+  for (const art of staticArticles) {
+    if (!seenSlugs.has(art.slug)) {
+      seenSlugs.add(art.slug)
+      mergedPool.push(art)
+    }
+  }
+
+  // Helper: find an article by slug across the merged pool
+  const findBySlug = (slug: string) =>
+    mergedPool.find((a) => a.slug === slug) ?? getArticleBySlug(slug)
+
+  // Helper: get articles by category name
+  const byCategory = (cat: string) =>
+    mergedPool.filter((a) => a.category.toLowerCase() === cat.toLowerCase())
+
+  // ── High Fidelity Section Placements ──
+
+  // Lead main article (first in pool)
+  const lead = mergedPool[0]
+
+  // Right-hand side of Hero section (4 items)
+  const leadRight = mergedPool.slice(1, 5)
+
+  // Trending section (4 items)
+  const trending = mergedPool.slice(5, 9)
+
+  // Sports section: fetch real sports news if available, or fall back to General/Static sports
+  const dbSports = byCategory('Sports')
+  const sports = dbSports.length >= 4 
+    ? dbSports.slice(0, 4) 
+    : [...dbSports, ...mergedPool.filter(a => a.category !== 'Sports')].slice(0, 4)
+
+  // Editor's Picks (5 items starting from index 9)
+  const editorPicks = mergedPool.slice(9, 14)
+
+  // Featured Posts in sidebar (6 items starting from index 14)
+  const featuredPosts = mergedPool.slice(14, 20)
+
+  // Weekly review items (4 items starting from index 20)
+  const weeklyArticles = mergedPool.slice(20, 24)
+
+  // Category blocks: cleanly populates Politics, Business, Tech, Entertainment etc. with matching news
+  const categoryBlockConfigs = home.categoryBlocks
+  const portalCategoryBlocks: PortalCategoryBlockData[] = categoryBlockConfigs.map((block) => {
+    const catArticles = byCategory(block.label)
+    return {
+      slug: block.slug,
+      label: block.label,
+      featured: catArticles[0] ?? findBySlug(block.featuredSlug) ?? mergedPool[0],
+      list: catArticles.length > 1
+        ? catArticles.slice(1, 5)
+        : block.listSlugs.map(findBySlug).filter(isDefined).slice(0, 4),
+    }
+  })
+
 
   return (
     <main>
@@ -196,8 +268,8 @@ export default function HomePage() {
           <AnimatedGrid className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             {lead ? (
               <AnimatedItem>
-                <Link href={`/article/${lead.slug}`} className="group block select-none h-full">
-                  <div className="relative h-full min-h-[320px] overflow-hidden bg-neutral-100 lg:min-h-[340px]">
+                <Link href={`/article/${lead.slug}`} className="group block select-none">
+                  <div className="relative h-[340px] overflow-hidden bg-neutral-100">
                     <NewsImage
                       src={lead.image}
                       alt={lead.imageAlt}
@@ -206,10 +278,10 @@ export default function HomePage() {
                       sizes="(max-width: 1024px) 100vw, 58vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                      <p className="text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-white/90">{lead.category}</p>
-                      <h1 className="mt-2 max-w-2xl text-[1.85rem] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[2.4rem]">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                      <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-white/90">{lead.category}</p>
+                      <h1 className="mt-1.5 max-w-2xl text-[1.5rem] font-semibold leading-[1.15] tracking-[-0.03em] text-white sm:text-[1.9rem]">
                         {lead.title}
                       </h1>
                     </div>
@@ -218,11 +290,11 @@ export default function HomePage() {
               </AnimatedItem>
             ) : null}
 
-            <div className="grid grid-cols-2 grid-rows-2 gap-4">
+            <div className="grid grid-cols-2 grid-rows-2 gap-3">
               {leadRight.map((article) => (
                 <AnimatedItem key={article.slug}>
-                  <Link href={`/article/${article.slug}`} className="group block select-none h-full">
-                    <div className="relative h-full min-h-[145px] overflow-hidden bg-neutral-100">
+                  <Link href={`/article/${article.slug}`} className="group block select-none">
+                    <div className="relative h-[160px] overflow-hidden bg-neutral-100">
                       <NewsImage
                         src={article.image}
                         alt={article.imageAlt}
@@ -230,9 +302,9 @@ export default function HomePage() {
                         sizes="(max-width: 768px) 50vw, 22vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-black/8 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 bg-black/28 p-2.5 backdrop-blur-[1px]">
-                        <h3 className="line-clamp-2 text-[0.88rem] font-semibold leading-5 text-white">{article.title}</h3>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 p-2.5">
+                        <h3 className="line-clamp-2 text-[0.8rem] font-semibold leading-[1.3] text-white">{article.title}</h3>
                       </div>
                     </div>
                   </Link>
@@ -241,26 +313,9 @@ export default function HomePage() {
             </div>
           </AnimatedGrid>
 
-          <AnimatedSection as="aside" className="space-y-4" delay={0.15}>
-            <div className="border border-neutral-200 bg-white px-4 py-3">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-9 items-center border-r border-neutral-200 pr-3 text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-[#0a8f07]">
-                  Breaking News
-                </span>
-                <p className="min-w-0 text-[0.92rem] leading-6 text-neutral-700">
-                  Saraki Foundation to provide Ramadan Iftar meals in seven states, 52 Mosques in Kwara
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              <StoryStack items={trending.slice(0, 3)} />
-              <div className="grid gap-3">
-                {sponsoredBanners.map((banner) => (
-                  <SponsoredBannerCard key={banner.label} banner={banner} compact />
-                ))}
-              </div>
-            </div>
+          <AnimatedSection as="aside" delay={0.15}>
+            {/* Real-time Live RSS Auto News Feed — compact, fixed height */}
+            <AutoNewsFeed articles={rssArticles} />
           </AnimatedSection>
         </div>
       </section>

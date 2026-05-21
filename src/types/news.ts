@@ -21,6 +21,7 @@ export type NewsArticle = {
   readTime: string
   image: string
   imageAlt: string
+  video_url?: string | null
   featured?: boolean
   spotlight?: boolean
   location?: string
@@ -28,6 +29,7 @@ export type NewsArticle = {
   content: string[]
   bullets?: string[]
   related: string[]
+  sourceUrl?: string | null
 }
 
 export type CategoryDefinition = {

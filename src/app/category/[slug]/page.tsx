@@ -11,7 +11,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { getCategoryPageContent } from '@/services/cms'
 import { getArticlesByCategory } from '@/data/news'
+import { getArticlesByCategoryFromDB } from '@/services/article-service'
 import { absoluteUrl } from '@/lib/metadata'
+
+export const dynamic = 'force-dynamic'
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -35,7 +38,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const category = getCategoryPageContent().find((item) => item.slug === slug)
   if (!category) notFound()
 
-  const articles = getArticlesByCategory(category.slug)
+  // Fetch from Supabase, merge with static fallback
+  const dbArticles = await getArticlesByCategoryFromDB(category.label, 20)
+  const staticArts = getArticlesByCategory(category.slug)
+  const articles = dbArticles.length > 0
+    ? [...dbArticles, ...staticArts.filter((sa) => !dbArticles.some((da) => da.slug === sa.slug))]
+    : staticArts
   const lead = articles[0]
   const rest = articles.slice(1)
   const mostRead = articles.slice(0, 4).map((article) => ({

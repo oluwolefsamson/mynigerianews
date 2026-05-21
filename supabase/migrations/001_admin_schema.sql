@@ -194,3 +194,36 @@ create or replace trigger articles_updated_at
 create or replace trigger admin_profiles_updated_at
   before update on public.admin_profiles
   for each row execute function public.update_updated_at();
+
+-- =============================================
+-- Media Storage & Video Support Additions
+-- =============================================
+
+-- 1. Support Video Column in Articles Table
+alter table public.articles add column if not exists video_url text;
+
+-- 2. Create the 'media' storage bucket if it doesn't exist
+insert into storage.buckets (id, name, public)
+values ('media', 'media', true)
+on conflict (id) do nothing;
+
+-- 3. Enable RLS on storage.objects
+alter table storage.objects enable row level security;
+
+-- 4. Drop any existing policies on storage.objects for 'media' bucket to avoid duplicates
+drop policy if exists "Media bucket is publicly readable" on storage.objects;
+drop policy if exists "Authenticated users can upload media" on storage.objects;
+drop policy if exists "Authenticated users can delete media" on storage.objects;
+
+-- 5. Set up storage policies for the 'media' bucket
+create policy "Media bucket is publicly readable"
+  on storage.objects for select
+  using ( bucket_id = 'media' );
+
+create policy "Authenticated users can upload media"
+  on storage.objects for insert
+  with check ( bucket_id = 'media' );
+
+create policy "Authenticated users can delete media"
+  on storage.objects for delete
+  using ( bucket_id = 'media' );

@@ -19,9 +19,11 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
-  const [now, setNow] = useState(() => new Date())
+  const [mounted, setMounted] = useState(false)
+  const [now, setNow] = useState<Date>(new Date())
 
   useEffect(() => {
+    setMounted(true)
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
@@ -56,23 +58,23 @@ export function SiteHeader() {
         <div className="bg-[#151515] text-white">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-[11px] font-medium sm:px-6 lg:px-8">
             <span className="text-neutral-300">
-              {new Intl.DateTimeFormat('en-NG', {
+              {mounted ? new Intl.DateTimeFormat('en-NG', {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
                 timeZone: 'Africa/Lagos',
-              }).format(now)}
+              }).format(now) : 'Loading date...'}
             </span>
             <div className="flex items-center gap-3 text-neutral-300">
               <span>
-                {new Intl.DateTimeFormat('en-NG', {
+                {mounted ? new Intl.DateTimeFormat('en-NG', {
                   hour: 'numeric',
                   minute: '2-digit',
                   second: '2-digit',
                   hour12: true,
                   timeZone: 'Africa/Lagos',
-                }).format(now)}
+                }).format(now) : 'Loading time...'}
               </span>
               <span className="h-4 w-px bg-white/25" />
               {[

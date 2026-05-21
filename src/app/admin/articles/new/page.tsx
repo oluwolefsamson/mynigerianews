@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2, ArrowLeft, Save } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { MediaUploader } from '@/components/admin/media-uploader'
 
 const CATEGORIES = ['Politics','Business','Sports','Technology','Health','Entertainment','Education','World','Africa','Nigeria']
 
@@ -24,6 +25,7 @@ export default function NewArticlePage() {
     content: '',
     image_url: '',
     image_alt: '',
+    video_url: '',
     status: 'draft' as 'draft' | 'published' | 'scheduled',
     published_at: '',
   })
@@ -80,7 +82,7 @@ export default function NewArticlePage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm space-y-5">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm space-y-5">
           <h2 className="text-[0.9rem] font-semibold text-neutral-700 border-b border-neutral-100 pb-3">Content</h2>
 
           {/* Title */}
@@ -124,7 +126,7 @@ export default function NewArticlePage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm space-y-5">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 sm:p-6 shadow-sm space-y-5">
           <h2 className="text-[0.9rem] font-semibold text-neutral-700 border-b border-neutral-100 pb-3">Settings</h2>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -152,23 +154,35 @@ export default function NewArticlePage() {
               </select>
             </div>
 
-            {/* Image URL */}
-            <div>
-              <label className="block text-[0.82rem] font-medium text-neutral-700 mb-1.5">Image URL</label>
-              <input
-                value={form.image_url} onChange={(e) => update('image_url', e.target.value)}
-                placeholder="https://…"
-                className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-[0.88rem] focus:border-[#0a8f07] focus:outline-none focus:ring-2 focus:ring-[#0a8f07]/20"
+            {/* Image Upload */}
+            <div className="sm:col-span-2 border-t border-neutral-100 pt-4">
+              <MediaUploader
+                label="Article Image *"
+                accept="image/*"
+                value={form.image_url}
+                onChange={(url) => update('image_url', url)}
+                placeholder="Upload or drag article image here"
               />
             </div>
 
             {/* Image Alt */}
-            <div>
-              <label className="block text-[0.82rem] font-medium text-neutral-700 mb-1.5">Image Alt Text</label>
+            <div className="sm:col-span-2">
+              <label className="block text-[0.82rem] font-medium text-neutral-700 mb-1.5">Image Alt Text (SEO & Accessibility)</label>
               <input
                 value={form.image_alt} onChange={(e) => update('image_alt', e.target.value)}
                 placeholder="Describe the image…"
                 className="w-full rounded-lg border border-neutral-300 px-4 py-2.5 text-[0.88rem] focus:border-[#0a8f07] focus:outline-none focus:ring-2 focus:ring-[#0a8f07]/20"
+              />
+            </div>
+
+            {/* Video Upload */}
+            <div className="sm:col-span-2 border-t border-neutral-100 pt-4">
+              <MediaUploader
+                label="Article Video (Optional)"
+                accept="video/*"
+                value={form.video_url}
+                onChange={(url) => update('video_url', url)}
+                placeholder="Upload or drag article video here"
               />
             </div>
 
